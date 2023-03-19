@@ -1,0 +1,16 @@
+{
+	"Cnc": {
+		"Server": "127.0.0.1",
+		"Port": "1234",
+		"AdmLogin": "user"
+	},
+	"Bot": {
+		"Server": "127.0.0.1",
+		"Port": "9999"
+	},
+	"Logging": {
+		"BotToken": "TELEGRAM BOT TOKEN",
+		"ChatId": "TELEGRAM CHAT ID",
+		"Logging": false
+	}
+}
