@@ -1,8 +1,6 @@
 # Homo-Network
 Homo Network - The best botnet in 2023
 
-# Homo Network
-
 ### Install
 ```
 1. Edit config.json
