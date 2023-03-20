@@ -10,7 +10,7 @@ Homo Network - The best botnet in 2023
 5. In the console write "go run ."
 ```
 
-### Demo
+### Showcase
 
 ![image](https://user-images.githubusercontent.com/123550911/226166600-51dfebd1-adfe-4744-ae21-74f67d92adb5.png)
 ![image](https://user-images.githubusercontent.com/123550911/226166625-5abd7836-fe17-4253-a19a-0ed1613f8de2.png)
