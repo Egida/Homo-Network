@@ -32,6 +32,7 @@ func Start(c *config.Config) {
 	NewCon := make(chan net.Conn)
 
 	server, err := net.Listen("tcp", c.Cnc.Server+":"+c.Cnc.Port)
+
 	if err != nil {
 		color.HiRed("Fails to start server")
 		os.Exit(0)

