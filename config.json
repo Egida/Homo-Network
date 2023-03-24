@@ -8,9 +8,18 @@
 		"Server": "127.0.0.1",
 		"Port": "9999"
 	},
+	"Api": {
+		"Server": "127.0.0.1",
+		"Port": "1339",
+		"CustomPathEnabled": false,
+		"CustomPath": "/path"
+	},
 	"Logging": {
 		"BotToken": "TELEGRAM BOT TOKEN",
 		"ChatId": "TELEGRAM CHAT ID",
 		"Logging": false
+	},
+	"InjectFile": {
+		"Linux": "./client/client.bin"
 	}
 }

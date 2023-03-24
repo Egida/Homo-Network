@@ -17,10 +17,19 @@ type Config struct {
 		Server string
 		Port   string
 	}
+	Api struct {
+		Server            string
+		Port              string
+		CustomPathEnabled bool
+		CustomPath        string
+	}
 	Logging struct {
 		BotToken string
 		ChatId   string
 		Logging  bool
+	}
+	InjectFile struct {
+		Linux string
 	}
 }
 

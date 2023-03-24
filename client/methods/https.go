@@ -6,6 +6,7 @@ import (
 	"homo/client/utils"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +24,7 @@ func HttpsDefault(target string, port string, duration string) {
 		fmt.Println(err)
 	}
 	sec := time.Now().Unix()
+	os.Exit(0)
 	for time.Now().Unix() <= sec+int64(dur)-1 {
 		go httpattack(target)
 		go httpattack(target)
