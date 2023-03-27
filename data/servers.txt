@@ -1,1 +1,1 @@
-ip:login:pass
+ip:user:pass

