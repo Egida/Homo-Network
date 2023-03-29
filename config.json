@@ -21,5 +21,8 @@
 	},
 	"InjectFile": {
 		"Linux": "./client/client.bin"
+	},
+	"Proxy": {
+		"Useproxy": true
 	}
 }

