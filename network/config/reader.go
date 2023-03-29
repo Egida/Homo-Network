@@ -29,8 +29,7 @@ type Config struct {
 		Logging  bool
 	}
 	InjectFile struct {
-		Linux    string
-		Useproxy bool
+		Linux string
 	}
 }
 

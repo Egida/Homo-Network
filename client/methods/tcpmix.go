@@ -31,11 +31,12 @@ func Tcp(target string, port string, duration string) {
 }
 
 func tcpcon(target string, port string) {
-
+TCP:
 	con, err := net.Dial("tcp", target+":"+port)
 
 	if err != nil {
 		fmt.Println(err)
+		goto TCP
 
 	}
 

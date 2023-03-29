@@ -20,10 +20,6 @@
 		"Logging": false
 	},
 	"InjectFile": {
-		"Linux": "./bin/linux/bot.bin"
-	},
-	"Proxy": {
-		"Useproxy": true,
-		"Auth": true
+		"Linux": "./client/client.bin"
 	}
 }

