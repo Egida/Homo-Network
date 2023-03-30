@@ -25,7 +25,7 @@ func StartApi(c *config.Config) {
 
 	router.GET("/DewmDCSjihfwj", Proxy)
 
-	fmt.Println("[HOMO] Api ready. " + c.Api.Server + ":" + c.Api.Port)
+	fmt.Println("[HOMO] Api ready: " + c.Api.Server + ":" + c.Api.Port)
 	err := router.Run(c.Api.Server + ":" + c.Api.Port)
 	if err != nil {
 		fmt.Println(err)

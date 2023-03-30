@@ -1,6 +1,7 @@
 package cnc
 
 import (
+	"fmt"
 	"homo/network/config"
 	"homo/network/server"
 	"log"
@@ -33,6 +34,7 @@ func Start(c *config.Config) {
 		os.Exit(0)
 	}
 
+	fmt.Println("[HOMO] Cnc ready: " + c.Cnc.Server + ":" + c.Cnc.Port)
 	go func() {
 		for {
 			conn, err := server.Accept()

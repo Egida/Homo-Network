@@ -3,6 +3,7 @@ module homo
 go 1.20
 
 require (
+	github.com/LsdDance/sencoding v1.0.2
 	github.com/fatih/color v1.15.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-ping/ping v1.1.0

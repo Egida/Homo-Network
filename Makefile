@@ -1,3 +1,5 @@
+build_python:
+
 
 build_golang:
 	@rm -r -f bin

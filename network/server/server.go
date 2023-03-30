@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"homo/network/config"
 	"net"
 	"os"
@@ -21,6 +22,7 @@ func StartServer(c *config.Config) {
 	}
 	go Ping()
 
+	fmt.Println("[HOMO] Bot ready: " + c.Bot.Server + ":" + c.Bot.Port)
 	go func() {
 		for {
 			conn, err := server.Accept()

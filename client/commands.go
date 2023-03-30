@@ -15,7 +15,6 @@ func CommandHandler(command string) {
 
 		args := strings.Split(commandd, " ")
 
-		fmt.Println(args[4])
 		go methods.HttpsDefault(args[1], args[2], args[3], args[4])
 	}
 

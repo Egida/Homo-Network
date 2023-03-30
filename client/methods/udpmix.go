@@ -49,9 +49,9 @@ UDP:
 		default:
 
 			fmt.Println(i)
-			go sendudp(con, "nilpayload", 12000)
-			go sendudp(con, "maxpayload", 2000)
-			go sendudp(con, "random", 1000)
+			go sendudp(con, "nilpayload", 50000)
+			go sendudp(con, "maxpayload", 20000)
+			go sendudp(con, "random", 3000*i)
 
 			time.Sleep(500 * time.Millisecond)
 		}

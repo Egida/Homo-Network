@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"homo/network/cnc"
 	"homo/network/config"
 	"homo/network/server"
@@ -19,6 +17,5 @@ func main() {
 	go server.StartServer(config)
 	go cnc.Start(config)
 	go api.StartApi(config)
-	fmt.Println("Started")
 	wg.Wait()
 }
