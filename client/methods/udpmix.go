@@ -33,12 +33,15 @@ func Udp(target string, port string, duration string) {
 func udpcon(target string, port string) {
 UDP:
 
-	con, err := net.Dial("udp", target+":"+port)
+	dial := net.Dialer{Timeout: 20 * time.Second, LocalAddr: nil, DualStack: false, KeepAlive: 1000}
+	con, err := dial.Dial("udp", target+":"+port)
 
 	if err != nil {
 		fmt.Println(err)
 		goto UDP
 	}
+
+	defer con.Close()
 
 	for i := 0; i < 20; i++ {
 		select {

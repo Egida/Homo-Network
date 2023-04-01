@@ -87,7 +87,7 @@ func newreq(target string, useproxy string) (*http.Client, *http.Request) {
 	req, _ := http.NewRequest("GET", target, nil)
 	if useproxy == "true" {
 
-		proxy := getProxy()
+		proxy := GetProxy()
 
 		var proxyURL url.URL
 
@@ -124,7 +124,7 @@ func newreq(target string, useproxy string) (*http.Client, *http.Request) {
 	return client, req
 }
 
-func getProxy() []string {
+func GetProxy() []string {
 
 _GETPROXY:
 	_proxies, err := http.Get(config.PROXYURL)

