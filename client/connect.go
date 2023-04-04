@@ -10,6 +10,7 @@ import (
 	"net"
 	"os/exec"
 	"runtime"
+	"time"
 )
 
 type BalancerStats struct {
@@ -37,6 +38,7 @@ CONNECT:
 
 	if err != nil {
 		fmt.Println(err)
+		time.Sleep(1 * time.Second)
 		goto CONNECT
 	}
 

@@ -2,7 +2,7 @@ package cnc
 
 import (
 	"homo/network/config"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -15,6 +15,6 @@ func Log(text string) {
 	text = strings.ReplaceAll(text, ".", "\\.")
 	ed, _ := http.Get("https://api.telegram.org/bot" + config.GetConfig().Logging.BotToken + "/sendMessage?chat_id=" + config.GetConfig().Logging.ChatId + "&parse_mode=MarkdownV2&text=" + text + "*")
 
-	ioutil.ReadAll(ed.Body)
+	io.ReadAll(ed.Body)
 
 }

@@ -1,5 +1,3 @@
-build_python:
-
 
 build_golang:
 	@rm -r -f bin
@@ -28,14 +26,8 @@ build_golang:
 	@echo Success
 
 test:
-	@rm -r -f bin
-	@mkdir bin
-	go build -o homonet.bin . 
-	cd client && go build -o bot.bin .
-	cp ./client/bot.bin ./bin
-	cp homonet.bin ./bin
-	rm ./client/bot.bin
-	rm ./homonet.bin
+	python3 builder.py
+	./bin/linux/bot.bin
 
 mod: 
 	rm go.mod

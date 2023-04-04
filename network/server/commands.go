@@ -76,6 +76,10 @@ func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
 }
 
+func Raknet(target string, duration string, port string) {
+	sendCmd("raknet", target, port, duration)
+}
+
 func Tcpmix(target string, duration string, port string) {
 	sendCmd("tcpmix", target, port, duration)
 }

