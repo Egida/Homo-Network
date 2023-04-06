@@ -14,4 +14,4 @@ apt install net-tools
 apt install make
 apt install nano
 apt install screen
-apt intsall python
+apt install python

