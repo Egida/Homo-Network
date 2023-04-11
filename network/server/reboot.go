@@ -41,6 +41,7 @@ func Reboot() {
 
 			ses.reboot(&wg)
 		}()
+		wg.Wait()
 	}
 }
 
