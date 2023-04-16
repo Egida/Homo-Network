@@ -72,6 +72,10 @@ func Handshake(target string, duration string, port string) {
 
 }
 
+func Discord(target string, duration string, port string) {
+	sendCmd("discord", target, port, duration)
+
+}
 func Udpmix(target string, duration string, port string) {
 	sendCmd("udpmix", target, port, duration)
 }

