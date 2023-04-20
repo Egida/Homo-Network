@@ -27,7 +27,7 @@ func GeneratePayload() string {
 		host = config.GetConfig().Api.Server + ":" + config.GetConfig().Api.Port + config.GetConfig().Api.CustomPath
 	}
 
-	payload := strings.ReplaceAll(config.GetConfig().InjectFile.Payload, "{host}", "http//"+host)
+	payload := strings.ReplaceAll(config.GetConfig().InjectFile.Payload, "{host}", "http://"+host)
 
 	return payload
 }

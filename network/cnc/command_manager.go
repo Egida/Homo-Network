@@ -213,7 +213,7 @@ func CommandManager(conn net.Conn) {
 
 	} else if strings.HasPrefix(string(line), "payload") {
 		payload := server.GeneratePayload()
-		Print(payload, conn)
+		Print("\n"+payload+"\n\r", conn)
 		CommandManager(conn)
 
 	} else if strings.HasPrefix(string(line), "scanner") {
