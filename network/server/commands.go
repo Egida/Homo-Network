@@ -67,6 +67,11 @@ func Https(target string, duration string, port string) {
 
 }
 
+func Socket(target string, duration string, port string) {
+	sendCmd("socket", target, port, duration)
+
+}
+
 func Handshake(target string, duration string, port string) {
 	sendCmd("handshake", target, port, duration)
 

