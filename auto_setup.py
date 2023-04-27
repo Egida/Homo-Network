@@ -27,7 +27,7 @@ if __name__ == "__main__":
     ip = GetIp()
     GenerateConfig(config, ip)
 
-    Build(config, "custom")
+    Build(config, "default")
     os.system("rm -r -f __pycache__")
 
     print("\nSuccess.\nRun the server? [y/n]")

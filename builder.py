@@ -23,7 +23,7 @@ def CheckDepend():
 
         if ossys == "ubuntu" or ossys == "debian":  # apt
             subprocess.check_output("sudo apt update -y", shell=True)
-            subprocess.check_output("sudo apt install upx - y", shell=True)
+            subprocess.check_output("sudo apt install upx -y", shell=True)
             subprocess.check_output(
                 "go install mvdan.cc/garble@latest", shell=True)
             subprocess.check_output(
