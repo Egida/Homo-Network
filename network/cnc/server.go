@@ -19,11 +19,6 @@ var (
 	Conns []net.Conn
 )
 
-func cls(conn net.Conn) {
-	Print("\x1B[2J\x1B[H", conn)
-	CommandManager(conn)
-}
-
 func Start(c *config.Config) {
 	NewCon := make(chan net.Conn)
 

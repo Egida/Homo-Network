@@ -12,6 +12,8 @@ import (
 
 func Tcp(target string, port string, duration string) {
 
+	defer Catch()
+
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
 	duration = strings.ReplaceAll(duration, "\r", "")
@@ -32,10 +34,13 @@ func Tcp(target string, port string, duration string) {
 
 func tcpcon(target string, port string) {
 
+	defer Catch()
+
 	con, err := net.Dial("tcp", target+":"+port)
 
 	if err != nil {
 		fmt.Println(err)
+		return
 
 	}
 
@@ -58,6 +63,8 @@ func tcpcon(target string, port string) {
 
 func rnd(con net.Conn) {
 
+	defer Catch()
+
 	var bytestr = []byte{byte(utils.RandomInt(2)), byte(utils.RandomInt(1)), byte(utils.RandomInt(2)), byte(utils.RandomInt(2)), byte(utils.RandomInt(2)), byte(utils.RandomInt(1)), byte(utils.RandomInt(2)), byte(utils.RandomInt(2))}
 
 	var res string
@@ -77,6 +84,7 @@ func rnd(con net.Conn) {
 }
 
 func nilpayload(con net.Conn, len int) {
+	defer Catch()
 
 	payload := make([]byte, len)
 
@@ -97,6 +105,8 @@ func nilpayload(con net.Conn, len int) {
 }
 
 func maxpayload(con net.Conn, size int) {
+
+	defer Catch()
 
 	payload := make([]byte, 0)
 

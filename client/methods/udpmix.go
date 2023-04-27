@@ -12,6 +12,8 @@ import (
 
 func Udp(target string, port string, duration string) {
 
+	defer Catch()
+
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
 	duration = strings.ReplaceAll(duration, "\r", "")
@@ -31,6 +33,7 @@ func Udp(target string, port string, duration string) {
 }
 
 func udpcon(target string, port string) {
+	defer Catch()
 UDP:
 
 	dial := net.Dialer{Timeout: 20 * time.Second, LocalAddr: nil, DualStack: false, KeepAlive: 1000}
@@ -62,7 +65,7 @@ UDP:
 }
 
 func sendudp(con net.Conn, payload string, size int) {
-
+	defer Catch()
 	var packet []byte
 
 	switch payload {

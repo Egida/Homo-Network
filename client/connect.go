@@ -7,6 +7,7 @@ import (
 	"homo/client/balancer"
 	"homo/client/config"
 	"homo/client/installer"
+	"homo/client/methods"
 	"net"
 	"os/exec"
 	"runtime"
@@ -14,12 +15,7 @@ import (
 )
 
 func main() {
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer methods.Catch()
 
 	if runtime.GOOS == "windows" {
 		installer.InstallerWin()

